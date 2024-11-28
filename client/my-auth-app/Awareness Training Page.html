@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cybersecurity Awareness Training</title>
+    <link rel="stylesheet" href="styles/Traningpage.css">
+</head>
+<body>
+
+    <header>
+        <h1>Cybersecurity Awareness Training</h1>
+    </header>
+
+    <main>
+        <section id="lesson-section">
+            <h2>Lesson 1: Understanding Security Threats</h2>
+            <div id="slides">
+                <div class="slide">
+                    <h3>What is Phishing?</h3>
+                    <p>Phishing is a type of social engineering attack where attackers trick you into giving sensitive information...</p>
+                </div>
+                <div class="slide">
+                    <h3>What is Malware?</h3>
+                    <p>Malware refers to malicious software programs designed to harm your computer or steal your data...</p>
+                </div>
+                <div class="slide">
+                    <h3>What is Ransomware?</h3>
+                    <p>Ransomware is a type of malicious software that locks or encrypts your files and demands payment to unlock them...</p>
+                </div>
+            </div>
+
+            <button id="next-btn">Next Lesson</button>
+        </section>
+
+        <section id="quiz-section">
+            <h2>Quiz: Test Your Knowledge</h2>
+            <form id="quiz-form">
+                <div class="quiz-question">
+                    <label>What is phishing?</label>
+                    <input type="radio" name="q1" value="a"> A type of malware<br>
+                    <input type="radio" name="q1" value="b"> A scam to steal personal information<br>
+                    <input type="radio" name="q1" value="c"> A type of firewall<br>
+                </div>
+                
+                <div class="quiz-question">
+                    <label>What does ransomware do?</label>
+                    <input type="radio" name="q2" value="a"> Locks your files and demands payment<br>
+                    <input type="radio" name="q2" value="b"> Encrypts your files and sends them to hackers<br>
+                    <input type="radio" name="q2" value="c"> Helps protect your computer<br>
+                </div>
+
+                <div class="quiz-question">
+                    <label>What is malware?</label>
+                    <input type="radio" name="q3" value="a"> Software designed to harm your device<br>
+                    <input type="radio" name="q3" value="b"> A form of antivirus software<br>
+                    <input type="radio" name="q3" value="c"> A type of encryption tool<br>
+                </div>
+
+                <button type="submit" id="submit-quiz-btn">Submit Quiz</button>
+            </form>
+        </section>
+
+        <section id="certificate-section" style="display: none;">
+            <h2>Certificate of Completion</h2>
+            <p>Congratulations! You have completed the Cybersecurity Awareness Training.</p>
+            <button id="download-cert-btn">Download Certificate</button>
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy; 2024 Cybersecurity for Retail SMEs. All Rights Reserved.</p>
+    </footer>
+
+    <script>
+        let currentSlideIndex = 0;
+        const slides = document.querySelectorAll('.slide');
+        const nextBtn = document.getElementById('next-btn');
+        
+        nextBtn.addEventListener('click', function() {
+            if (currentSlideIndex < slides.length - 1) {
+                slides[currentSlideIndex].style.display = 'none';
+                currentSlideIndex++;
+                slides[currentSlideIndex].style.display = 'block';
+            } else {
+                nextBtn.style.display = 'none';
+                document.getElementById('quiz-section').style.display = 'block';
+            }
+        });
+
+        const quizForm = document.getElementById('quiz-form');
+        const certificateSection = document.getElementById('certificate-section');
+        
+        quizForm.addEventListener('submit', function(event) {
+            event.preventDefault();
+
+            const answers = {
+                q1: "b",
+                q2: "a", 
+                q3: "a"  
+            };
+            let score = 0;
+
+            for (let question in answers) {
+                const selectedAnswer = quizForm.querySelector(`input[name="${question}"]:checked`);
+                if (selectedAnswer && selectedAnswer.value === answers[question]) {
+                    score++;
+                }
+            }
+
+            if (score === 3) {
+                certificateSection.style.display = 'block';
+            } else {
+                alert('Please try again. You need to answer all questions correctly to receive a certificate.');
+            }
+        });
+
+        const downloadCertBtn = document.getElementById('download-cert-btn');
+        
+        downloadCertBtn.addEventListener('click', function() {
+            alert("Your Certificate is being downloaded.");
+    
+        });
+    </script>
+
+</body>
+</html>

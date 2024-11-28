@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registration Page</title>
+    <link rel="stylesheet" href="styles/style.css">
+</head>
+
+<body>
+    <div class="registration-container">
+        <h2>Create Your Account</h2>
+        <form id="registration-form">
+            <label for="email">Email:</label>
+            <input type="email" id="email" name="email" placeholder="Enter your email" required>
+
+            <label for="password">Password:</label>
+            <input type="password" id="password" name="password" placeholder="Enter your password" required>
+            <div id="password-strength">Password Strength: <span id="strength-label">Weak</span></div>
+
+            <label for="confirm-password">Confirm Password:</label>
+            <input type="password" id="confirm-password" name="confirm-password" placeholder="Confirm your password" required>
+
+            <!-- 2FA Option -->
+            <label for="enable-2fa">
+                <input type="checkbox" id="enable-2fa" name="enable-2fa">
+                Enable Two-Factor Authentication (2FA)
+            </label>
+
+            <button type="submit" id="register-btn">Register</button>
+        </form>
+        <div class="login-link">
+            <p>Already have an account? <a href="loginpage.html">Login here</a></p>
+        </div>
+    </div>
+
+    <script>
+        // Password Strength Checker
+        const passwordInput = document.getElementById("password");
+        const strengthLabel = document.getElementById("strength-label");
+
+        // Listen for input in the password field
+        passwordInput.addEventListener("input", function () {
+            const password = passwordInput.value;
+            const strength = checkPasswordStrength(password);
+            strengthLabel.textContent = strength;
+            updateStrengthColor(strength);
+        });
+
+        // Function to check password strength
+        function checkPasswordStrength(password) {
+            const lengthCriteria = password.length >= 8;
+            const uppercaseCriteria = /[A-Z]/.test(password);
+            const numberCriteria = /\d/.test(password);
+            const symbolCriteria = /[!@#$%^&*(),.?":{}|<>]/.test(password);
+
+            // Determine the strength based on criteria
+            let strength = "Weak";
+            if (lengthCriteria && uppercaseCriteria && numberCriteria && symbolCriteria) {
+                strength = "Strong";
+            } else if (lengthCriteria && (uppercaseCriteria || numberCriteria || symbolCriteria)) {
+                strength = "Medium";
+            }
+
+            return strength;
+        }
+
+        // Update the strength label color based on password strength
+        function updateStrengthColor(strength) {
+            if (strength === "Weak") {
+                strengthLabel.style.color = "red";
+            } else if (strength === "Medium") {
+                strengthLabel.style.color = "orange";
+            } else if (strength === "Strong") {
+                strengthLabel.style.color = "green";
+            }
+        }
+
+        // Form submission event
+        document.getElementById("registration-form").addEventListener("submit", async function (event) {
+            event.preventDefault(); // Prevent default form submission
+
+            const email = document.getElementById("email").value;
+            const password = document.getElementById("password").value;
+            const confirmPassword = document.getElementById("confirm-password").value;
+            const enable2FA = document.getElementById("enable-2fa").checked; // Check if 2FA is enabled
+
+            // Validation checks
+            if (!email || !password || !confirmPassword) {
+                alert("Please fill all fields.");
+                return;
+            }
+
+            if (password !== confirmPassword) {
+                alert("Passwords do not match.");
+                return;
+            }
+
+            // Check password strength before submitting
+            const passwordStrength = checkPasswordStrength(password);
+            if (passwordStrength === "Weak") {
+                alert("Please choose a stronger password. Your password should be at least 8 characters long, include a mix of uppercase, lowercase, numbers, and special characters.");
+                return; // Stop form submission
+            }
+
+            try {
+                // Send registration details to the backend
+                const response = await fetch('/api/auth/register', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email, password, confirmPassword, enable2FA }),
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    alert(data.message); // Notify the user of successful registration
+
+                    // Store the email in localStorage
+                    localStorage.setItem("user", email);
+
+                    if (enable2FA) {
+                        // Redirect to the 2FA verification page if enabled
+                        window.location.href = "2fa-verification.html";
+                    } else {
+                        // Redirect to the login page if no 2FA
+                        window.location.href = "loginpage.html";
+                    }
+                } else {
+                    alert(data.message); // Show error message from the backend
+                }
+            } catch (error) {
+                console.error("Registration error:", error);
+                alert("An error occurred during registration.");
+            }
+        });
+    </script>
+</body>
+
+</html>

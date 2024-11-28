@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>2FA Verification</title>
+    <link rel="stylesheet" href="styles/2fa.css">
+</head>
+
+<body>
+
+    <div class="verification-container">
+        <h2>Two-Factor Authentication</h2>
+        <p>Please enter the OTP sent to your email:</p>
+
+        <label for="otp">One-Time Password (OTP):</label>
+        <input type="text" id="otp_inp" name="otp" placeholder="Enter OTP" required>
+
+        <button id="verify-btn" class="btn">Verify OTP</button>
+    </div>
+
+    <script>
+        const email = localStorage.getItem("user");
+        console.log("Email retrieved from localStorage:", email);
+    
+        if (!email) {
+            alert("Email not found. Please log in again.");
+            window.location.href = "loginpage.html";
+        }
+    
+        document.getElementById("verify-btn").addEventListener("click", async () => {
+            const otp = document.getElementById("otp_inp").value.trim();
+            console.log("Entered OTP:", otp);
+    
+            if (!otp) {
+                alert("Please enter the OTP.");
+                return;
+            }
+    
+            try {
+                const response = await fetch('/api/auth/verify-otp', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email, otp }),
+                });
+    
+                console.log("Response status:", response.status);
+    
+                const data = await response.json();
+                console.log("Response data:", data);
+    
+                if (response.ok) {
+                    alert(data.message); 
+                    window.location.href = "homepage.html";
+                } else {
+                    alert(data.message);
+                }
+            } catch (error) {
+                console.error('Error verifying OTP:', error);
+                alert("Failed to verify OTP. Please try again.");
+            }
+        });
+    </script>
+    
+
+</body>
+
+</html>
