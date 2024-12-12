@@ -19,6 +19,10 @@
         <label for="password">Password:</label>
         <input type="password" id="password" name="password" placeholder="Enter your password" required>
 
+        <!-- Memorable Information field -->
+        <label for="memorable-info">Enter your Memorable Word/Phrase:</label>
+        <input type="text" id="memorable-info" name="memorableInfo" placeholder="Enter your memorable word or phrase" required>
+
         <button id="login-btn">Log in</button>
 
         <div class="register-link">
@@ -32,23 +36,22 @@
         document.getElementById("login-btn").addEventListener("click", async function () {
             const email = document.getElementById("email").value;
             const password = document.getElementById("password").value;
+            const memorableInfo = document.getElementById("memorable-info").value;
 
-            if (email && password) {
+            if (email && password && memorableInfo) {
                 try {
                     const response = await fetch('/api/auth/login', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ email, password }),
+                        body: JSON.stringify({ email, password, memorableInfo }),
                     });
 
                     const data = await response.json();
 
                     if (response.ok) {
-                        // Store email in localStorage
                         localStorage.setItem("user", email);
 
                         if (data.redirect) {
-                            // Redirect to the provided URL
                             window.location.href = data.redirect;
                         } else {
                             alert('Login successful!');
@@ -61,7 +64,7 @@
                     alert(`An error occurred: ${error.message}`);
                 }
             } else {
-                alert('Please enter both email and password.');
+                alert('Please enter both email, password, and memorable information.');
             }
         });
     </script>

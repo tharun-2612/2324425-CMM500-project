@@ -15,10 +15,15 @@ const userSchema = new mongoose.Schema({
         type: Boolean,
         default: false,
     },
+    memorableInfo: {
+        type: String, 
+        required: false,
+    },
     verified: {
         type: Boolean,
         default: false,
     },
 });
 
+// Export the User model
 module.exports = mongoose.model('User', userSchema);

@@ -59,7 +59,6 @@
 
         checkAccess();
 
-        // Function to sanitize input
         function sanitizeInput(input) {
             const tempElement = document.createElement('div');
             tempElement.textContent = input;
@@ -89,7 +88,6 @@
         // Fetch metrics when the page loads
         fetchDashboardMetrics();
 
-        // View Full Report Button Click Handler
         document.getElementById('view-report-btn').addEventListener('click', function () {
             if (confirm("Do you want to view the full report?")) {
                 const sanitizedAction = sanitizeInput("Redirecting to full report...");

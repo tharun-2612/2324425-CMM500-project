@@ -22,6 +22,10 @@
             <label for="confirm-password">Confirm Password:</label>
             <input type="password" id="confirm-password" name="confirm-password" placeholder="Confirm your password" required>
 
+            <!-- Memorable Information -->
+            <label for="memorable-info">Set a Memorable Word or Phrase:</label>
+            <input type="text" id="memorable-info" name="memorableInfo" placeholder="Enter a memorable word or phrase" required>
+
             <!-- 2FA Option -->
             <label for="enable-2fa">
                 <input type="checkbox" id="enable-2fa" name="enable-2fa">
@@ -40,7 +44,6 @@
         const passwordInput = document.getElementById("password");
         const strengthLabel = document.getElementById("strength-label");
 
-        // Listen for input in the password field
         passwordInput.addEventListener("input", function () {
             const password = passwordInput.value;
             const strength = checkPasswordStrength(password);
@@ -48,14 +51,12 @@
             updateStrengthColor(strength);
         });
 
-        // Function to check password strength
         function checkPasswordStrength(password) {
             const lengthCriteria = password.length >= 8;
             const uppercaseCriteria = /[A-Z]/.test(password);
             const numberCriteria = /\d/.test(password);
             const symbolCriteria = /[!@#$%^&*(),.?":{}|<>]/.test(password);
 
-            // Determine the strength based on criteria
             let strength = "Weak";
             if (lengthCriteria && uppercaseCriteria && numberCriteria && symbolCriteria) {
                 strength = "Strong";
@@ -66,7 +67,6 @@
             return strength;
         }
 
-        // Update the strength label color based on password strength
         function updateStrengthColor(strength) {
             if (strength === "Weak") {
                 strengthLabel.style.color = "red";
@@ -77,17 +77,16 @@
             }
         }
 
-        // Form submission event
         document.getElementById("registration-form").addEventListener("submit", async function (event) {
-            event.preventDefault(); // Prevent default form submission
+            event.preventDefault();
 
             const email = document.getElementById("email").value;
             const password = document.getElementById("password").value;
             const confirmPassword = document.getElementById("confirm-password").value;
-            const enable2FA = document.getElementById("enable-2fa").checked; // Check if 2FA is enabled
+            const memorableInfo = document.getElementById("memorable-info").value;
+            const enable2FA = document.getElementById("enable-2fa").checked;
 
-            // Validation checks
-            if (!email || !password || !confirmPassword) {
+            if (!email || !password || !confirmPassword || !memorableInfo) {
                 alert("Please fill all fields.");
                 return;
             }
@@ -101,7 +100,7 @@
             const passwordStrength = checkPasswordStrength(password);
             if (passwordStrength === "Weak") {
                 alert("Please choose a stronger password. Your password should be at least 8 characters long, include a mix of uppercase, lowercase, numbers, and special characters.");
-                return; // Stop form submission
+                return;
             }
 
             try {
@@ -109,26 +108,23 @@
                 const response = await fetch('/api/auth/register', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ email, password, confirmPassword, enable2FA }),
+                    body: JSON.stringify({ email, password, confirmPassword, memorableInfo, enable2FA }),
                 });
 
                 const data = await response.json();
 
                 if (response.ok) {
-                    alert(data.message); // Notify the user of successful registration
+                    alert(data.message);
 
-                    // Store the email in localStorage
                     localStorage.setItem("user", email);
 
                     if (enable2FA) {
-                        // Redirect to the 2FA verification page if enabled
                         window.location.href = "2fa-verification.html";
                     } else {
-                        // Redirect to the login page if no 2FA
                         window.location.href = "loginpage.html";
                     }
                 } else {
-                    alert(data.message); // Show error message from the backend
+                    alert(data.message);
                 }
             } catch (error) {
                 console.error("Registration error:", error);
